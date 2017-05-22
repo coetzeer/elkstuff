@@ -1,0 +1,12 @@
+LoadPlugin interface
+LoadPlugin cpu
+LoadPlugin disk
+LoadPlugin load
+LoadPlugin memory
+
+<Plugin disk>
+       Disk "/^[hs]d[a-f][0-9]?$/"
+       IgnoreSelected false
+       #UseBSDName false
+       #UdevNameAttr "DEVNAME"
+</Plugin>

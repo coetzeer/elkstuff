@@ -1,0 +1,107 @@
+---
+# file: oracle-java/defaults/main.yml
+#
+# defaults file
+#
+
+- name: install collectd
+  package: name="{{item}}"
+  with_items:
+  - "collectd"
+  - "collectd-java"
+  - "collectd-generic-jmx"
+  - collectd-rrdcached
+  - collectd-zookeeper
+  - collectd-apache
+  - collectd-web
+  - collectd-curl
+  - collectd-curl_json
+  - collectd-curl_xml
+  notify:
+    - restart collectd
+
+- name: install collectd-web dependencies
+  package: name="{{item}}"
+  with_items:
+    - "rrdtool"
+    - "rrdtool-devel"
+    - "rrdtool-perl"
+    - "perl-HTML-Parser"
+    - "perl-JSON"
+  notify:
+    - restart httpd
+
+- file:
+    path: /var/lib/collectd/rrd
+    state: absent
+
+- file:
+    path: /var/lib/collectd/csv
+    state: absent
+
+- lineinfile:
+    path: /usr/share/collectd/types.db
+    line: "{{item}}"
+  with_items: "{{custom_types}}"
+  notify:
+    - restart collectd
+
+- lineinfile:
+    path: /etc/collectd.conf
+    regexp: '^Interval'
+    line: 'Interval     20'
+  notify:
+    - restart collectd
+
+- name: switch off the plugins enabled by default. we switch them on in the 'default' include file
+  lineinfile:
+    path: /etc/collectd.conf
+    regexp: '^{{item}}'
+    line: '#{{item}}'
+  with_items:
+    -  "LoadPlugin cpu"
+    -  "LoadPlugin interface"
+    -  "LoadPlugin disk"
+    -  "LoadPlugin load"
+    -  "LoadPlugin memory"
+  notify:
+    - restart collectd
+
+
+- file:
+    src: /usr/lib/jvm/jre/lib/amd64/server/libjvm.so
+    dest: /lib64/libjvm.so
+    state: link
+
+- name: Setup collectd configurations
+  template: dest="/etc/collectd.d/{{item}}.conf" src="{{item}}.collectd.conf.j2"
+  with_items:
+    - zookeeper
+    - rrdtool
+    - rrdcached
+    - java
+    - csv
+    - default
+    - curl
+  notify:
+  - restart collectd
+  - restart httpd
+
+# - git:
+#     repo: 'https://github.com/httpdss/collectd-web.git'
+#     dest: /usr/local/collectd-web
+#     force: yes
+#   notify:
+#     - restart collectdweb
+
+# - file: path="/usr/local/collectd-web/cgi-bin/graphdefs.cgi" state=touch mode="u+x,g+x"
+#   notify:
+#   - restart collectdweb
+#
+# - name: Setup CollectD web service
+#   template: dest="/etc/systemd/system/collectdweb.service" src=collectdweb.service.j2
+#   notify:
+#   - restart collectdweb
+#
+# - name: reload systemd
+#   command: /usr/bin/systemctl --system daemon-reload

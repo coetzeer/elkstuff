@@ -1,0 +1,15 @@
+[Unit]
+Description=Collectd Web
+After=collectd.target
+ConditionPathExists=/usr/local/collectd-web
+
+[Service]
+Type=simple
+User=root
+SyslogIdentifier=collectdweb
+WorkingDirectory=/usr/local/collectd-web
+ExecStart=/bin/python runserver.py 0.0.0.0 8888
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

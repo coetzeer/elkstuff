@@ -1,0 +1,159 @@
+LoadPlugin java
+
+<Plugin "java">
+JVMARG "-Djava.class.path=/usr/share/collectd/java/collectd-api.jar:/usr/share/collectd/java/generic-jmx.jar"
+LoadPlugin "org.collectd.java.GenericJMX"
+
+  <Plugin "GenericJMX">
+    <MBean "gc-count">
+      ObjectName "java.lang:type=GarbageCollector,*"
+      InstancePrefix "kafka-"
+      InstanceFrom "name"
+      <Value>
+        Type "invocations"
+        Table false
+        Attribute "CollectionCount"
+        InstancePrefix "count"
+      </Value>
+    </MBean>
+     <MBean "gc-time">
+      ObjectName "java.lang:type=GarbageCollector,*"
+      InstancePrefix "kafka-"
+      #InstanceFrom "name"
+      <Value>
+        Type "total_time_in_ms"
+        Table false
+        Attribute "CollectionTime"
+        InstancePrefix "time"
+      </Value>
+    </MBean>
+    <MBean "memory_pool">
+      ObjectName "java.lang:type=MemoryPool,*"
+      InstancePrefix "kafka-"
+      InstanceFrom "name"
+      <Value>
+        Type "derive"
+        Table true
+        Attribute "Usage"
+      </Value>
+   </MBean>
+     <MBean "memory-heap">
+      ObjectName "java.lang:type=Memory"
+      InstancePrefix "kafka-"
+      <Value>
+        Type "derive"
+        Table true
+        Attribute "HeapMemoryUsage"
+      </Value>
+    </MBean>
+    <MBean "memory-nonheap">
+      ObjectName "java.lang:type=Memory"
+      InstancePrefix "kafka-"
+      <Value>
+        Type "derive"
+        Table true
+        Attribute "NonHeapMemoryUsage"
+      </Value>
+    </MBean>
+    <MBean "kafka/messageIn">
+      ObjectName "kafka.server:type=BrokerTopicMetrics,name=MessagesInPerSec"
+      InstancePrefix "mytopicname"
+      #InstanceFrom "name"
+      <Value>
+         Type "counter"
+         Table false
+         Attribute "Count"
+         InstancePrefix "kafka-messages-in"
+      </Value>
+   </MBean>
+#   <MBean "kafka/requestRate">
+#      ObjectName "kafka.network:type=RequestMetrics,name=RequestsPerSec"
+#      InstancePrefix "mytopicname"
+#      InstanceFrom "request"
+#      <Value>
+#         Type "counter"
+#         Table false
+#         Attribute "Count"
+#         InstancePrefix "kafka-messages-in"
+#      </Value>
+#   </MBean>
+    <Connection>
+      ServiceURL "service:jmx:rmi:///jndi/rmi://localhost:5555/jmxrmi"
+#      Collect "memory_pool"
+      Collect "memory-heap"
+#      Collect "memory-nonheap"
+      Collect "gc-count"
+      Collect "gc-time"
+      #Collect "kafka/requestRate"
+      Collect "kafka/messageIn"
+    </Connection>
+  </Plugin>
+
+  ############################
+  #
+  # Zookeeper config
+  #
+  #############################
+
+  <Plugin "GenericJMX">
+    <MBean "gc-count">
+      ObjectName "java.lang:type=GarbageCollector,*"
+      InstancePrefix "zookeeper-"
+      InstanceFrom "name"
+      <Value>
+        Type "invocations"
+        Table false
+        Attribute "CollectionCount"
+        InstancePrefix "count"
+      </Value>
+    </MBean>
+     <MBean "gc-time">
+      ObjectName "java.lang:type=GarbageCollector,*"
+      InstancePrefix "zookeeper-"
+      InstanceFrom "name"
+      <Value>
+        Type "total_time_in_ms"
+        Table false
+        Attribute "CollectionTime"
+        InstancePrefix "time"
+      </Value>
+    </MBean>
+    <MBean "memory_pool">
+      ObjectName "java.lang:type=MemoryPool,*"
+      InstancePrefix "zookeeper-"
+      InstanceFrom "name"
+      <Value>
+        Type "jmx_memory"
+        Table true
+        Attribute "Usage"
+      </Value>
+    </MBean>
+     <MBean "memory-heap">
+      ObjectName "java.lang:type=Memory"
+      InstancePrefix "zookeeper-"
+      <Value>
+        Type "jmx_memory"
+        Table true
+        Attribute "HeapMemoryUsage"
+      </Value>
+    </MBean>
+    <MBean "memory-nonheap">
+      ObjectName "java.lang:type=Memory"
+      InstancePrefix "zookeeper-"
+      <Value>
+        Type "jmx_memory"
+        Table true
+        Attribute "NonHeapMemoryUsage"
+      </Value>
+    </MBean>
+    <Connection>
+      ServiceURL "service:jmx:rmi:///jndi/rmi://localhost:3310/jmxrmi"
+      Collect "memory_pool"
+      Collect "memory-heap"
+      Collect "memory-nonheap"
+      Collect "gc-count"
+      Collect "gc-time"
+    </Connection>
+  </Plugin>
+
+</Plugin>

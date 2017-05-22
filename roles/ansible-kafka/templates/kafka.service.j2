@@ -1,0 +1,17 @@
+[Unit]
+Description=Kafka Daemon
+After=zookeeper.service
+
+[Service]
+Type=simple
+User=kafka
+LimitNOFILE=32768
+Restart=on-failure
+SyslogIdentifier=kafka
+WorkingDirectory={{ kafka_install_dir }}/bin
+Environment="KAFKA_HEAP_OPTS={{ kafka_heap_opts }}"
+Environment="JMX_PORT=5555"
+ExecStart={{ kafka_install_dir }}/bin/kafka-server-start.sh /etc/kafka/server.properties
+
+[Install]
+WantedBy=multi-user.target

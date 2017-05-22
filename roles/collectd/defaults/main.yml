@@ -1,0 +1,3 @@
+---
+custom_types:
+  - "jmx_memory      value:GAUGE:0:U"

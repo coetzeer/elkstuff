@@ -1,0 +1,41 @@
+---
+- name: Setup myid
+  template: dest="{{zookeeper_data_dir}}/myid" src=myid.j2
+  notify:
+    - restart zookeeper
+
+- name: Cat serverid
+  shell: "cat {{zookeeper_data_dir}}/myid"
+  register: service_id_cat
+
+- set_fact:
+    server_id: "{{service_id_cat.stdout}}"
+
+- name: Setup zoo.cfg
+  template: dest="{{zookeeper_conf_dir}}/zoo.cfg" src=zoo.cfg.j2
+  notify:
+    - restart zookeeper
+
+- name: Put jolokia jar in place
+  copy: dest="{{zookeeper_dir}}/bin/jolokia-jvm-1.3.5-agent.jar" src=jolokia-jvm-1.3.5-agent.jar
+  notify:
+    - restart zookeeper
+
+- name: Setup environment
+  template: dest="{{zookeeper_conf_dir}}/zookeeper-env.sh" src=environment.j2
+  notify:
+    - restart zookeeper
+
+- name: Create dirs
+  file: path={{item}} state=directory owner=zookeeper group=zookeeper mode=755 recurse=true
+  with_items:
+  - "{{zookeeper_data_dir}}"
+  - "{{zookeeper_log_dir}}"
+
+
+- name: Setup log4j
+  template: dest="{{zookeeper_conf_dir}}/log4j.properties" owner=root group=root mode=644 src=log4j.properties.j2
+  notify:
+    - restart zookeeper
+
+- meta: flush_handlers

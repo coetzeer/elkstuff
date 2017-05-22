@@ -1,0 +1,12 @@
+---
+- hosts: all
+  remote_user: vagrant
+  become: true
+  vars:
+    oracle_java_version: 8
+    oracle_java_version_update: 21
+
+  roles:
+    # - ansible-zookeeper
+    # - ansible-kafka
+    - collectd
