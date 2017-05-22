@@ -7,6 +7,7 @@
     oracle_java_version_update: 21
 
   roles:
-    # - ansible-zookeeper
-    # - ansible-kafka
-    - collectd
+    - ansible-zookeeper
+    - ansible-kafka
+    #- collectd
+    - elasticsearch

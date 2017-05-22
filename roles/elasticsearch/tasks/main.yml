@@ -1,0 +1,23 @@
+- name: install elasticsearch
+  package: name="{{item}}"
+  with_items:
+  - "elasticsearch"
+  - "yum-cron"
+  notify:
+    - restart elasticsearch
+
+
+- lineinfile:
+    path: /etc/elasticsearch/elasticsearch.yml
+    regexp: "^cluster.name:"
+    line: "cluster.name: elkstack"
+  notify:
+    - restart elasticsearch
+
+
+- lineinfile:
+    path: /etc/elasticsearch/elasticsearch.yml
+    regexp: "^discovery.zen.ping.unicast.hosts:"
+    line: 'discovery.zen.ping.unicast.hosts: ["192.168.33.10","192.168.33.11","192.168.33.12"]'
+  notify:
+    - restart elasticsearch
