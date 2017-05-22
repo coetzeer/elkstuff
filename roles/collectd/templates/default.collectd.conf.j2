@@ -3,10 +3,18 @@ LoadPlugin cpu
 LoadPlugin disk
 LoadPlugin load
 LoadPlugin memory
+LoadPlugin df
+LoadPlugin swap
+
 
 <Plugin disk>
-       Disk "/^[hs]d[a-f][0-9]?$/"
-       IgnoreSelected false
+       #Disk "/^[hs]d[a-f][0-9]?$/"
+       IgnoreSelected true
        #UseBSDName false
        #UdevNameAttr "DEVNAME"
+</Plugin>
+
+
+<Plugin df>
+  IgnoreSelected true
 </Plugin>

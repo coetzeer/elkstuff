@@ -19,7 +19,7 @@ LoadPlugin "org.collectd.java.GenericJMX"
      <MBean "gc-time">
       ObjectName "java.lang:type=GarbageCollector,*"
       InstancePrefix "kafka-"
-      #InstanceFrom "name"
+      InstanceFrom "name"
       <Value>
         Type "total_time_in_ms"
         Table false
@@ -39,7 +39,7 @@ LoadPlugin "org.collectd.java.GenericJMX"
    </MBean>
      <MBean "memory-heap">
       ObjectName "java.lang:type=Memory"
-      InstancePrefix "kafka-"
+      InstancePrefix "kafka-memory-heap"
       <Value>
         Type "derive"
         Table true
@@ -48,24 +48,24 @@ LoadPlugin "org.collectd.java.GenericJMX"
     </MBean>
     <MBean "memory-nonheap">
       ObjectName "java.lang:type=Memory"
-      InstancePrefix "kafka-"
+      InstancePrefix "kafka-memory-nonheap"
       <Value>
         Type "derive"
         Table true
         Attribute "NonHeapMemoryUsage"
       </Value>
     </MBean>
-    <MBean "kafka/messageIn">
-      ObjectName "kafka.server:type=BrokerTopicMetrics,name=MessagesInPerSec"
-      InstancePrefix "mytopicname"
-      #InstanceFrom "name"
-      <Value>
-         Type "counter"
-         Table false
-         Attribute "Count"
-         InstancePrefix "kafka-messages-in"
-      </Value>
-   </MBean>
+#    <MBean "kafka/messageIn">
+#      ObjectName "kafka.server:type=BrokerTopicMetrics,name=MessagesInPerSec"
+#      InstancePrefix "mytopicname"
+#      #InstanceFrom "name"
+#      <Value>
+#         Type "counter"
+#         Table false
+#         Attribute "Count"
+#         InstancePrefix "kafka-messages-in"
+#      </Value>
+#   </MBean>
 #   <MBean "kafka/requestRate">
 #      ObjectName "kafka.network:type=RequestMetrics,name=RequestsPerSec"
 #      InstancePrefix "mytopicname"
@@ -79,13 +79,13 @@ LoadPlugin "org.collectd.java.GenericJMX"
 #   </MBean>
     <Connection>
       ServiceURL "service:jmx:rmi:///jndi/rmi://localhost:5555/jmxrmi"
-#      Collect "memory_pool"
+      Collect "memory_pool"
       Collect "memory-heap"
-#      Collect "memory-nonheap"
+      Collect "memory-nonheap"
       Collect "gc-count"
       Collect "gc-time"
       #Collect "kafka/requestRate"
-      Collect "kafka/messageIn"
+      #Collect "kafka/messageIn"
     </Connection>
   </Plugin>
 
@@ -130,7 +130,7 @@ LoadPlugin "org.collectd.java.GenericJMX"
     </MBean>
      <MBean "memory-heap">
       ObjectName "java.lang:type=Memory"
-      InstancePrefix "zookeeper-"
+      InstancePrefix "zookeeper-memory"
       <Value>
         Type "jmx_memory"
         Table true
@@ -139,7 +139,7 @@ LoadPlugin "org.collectd.java.GenericJMX"
     </MBean>
     <MBean "memory-nonheap">
       ObjectName "java.lang:type=Memory"
-      InstancePrefix "zookeeper-"
+      InstancePrefix "zookeeper-memory-nonheap"
       <Value>
         Type "jmx_memory"
         Table true
