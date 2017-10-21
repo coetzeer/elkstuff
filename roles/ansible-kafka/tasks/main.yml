@@ -11,5 +11,5 @@
 - include: start.yml
   when: run_mode == 'Start' or run_mode == 'Deploy'
 
-#- shell: /opt/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --topic filebeats --partitions 3 --replication-factor 3
-#- shell: /opt/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --topic metricbeats --partitions 3 --replication-factor 3
+- shell: /opt/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181/kafka --topic filebeats --partitions 3 --replication-factor 3 --if-not-exists
+- shell: /opt/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181/kafka --topic metricbeats --partitions 3 --replication-factor 3 --if-not-exists
