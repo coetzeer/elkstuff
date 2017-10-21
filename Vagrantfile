@@ -2,9 +2,9 @@
 # vi: set ft=ruby :
 
 cluster = {
-  "server1" => { :ip => "192.168.33.10", :cpus => 1, :mem => 1024 },
-  "server2" => { :ip => "192.168.33.11", :cpus => 1, :mem => 1024 },
-  "server3" => { :ip => "192.168.33.12", :cpus => 1, :mem => 1024 }
+  "server1" => { :ip => "192.168.33.10", :cpus => 1, :mem => 4096 },
+  "server2" => { :ip => "192.168.33.11", :cpus => 1, :mem => 4096 },
+  "server3" => { :ip => "192.168.33.12", :cpus => 1, :mem => 4096 }
 }
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
@@ -35,8 +35,10 @@ Vagrant.configure(2) do |config|
 
     config.vm.define hostname do |cfg|
       cfg.vm.provider :virtualbox do |vb, override|
+        #config.vm.box = "centos/7"
+        config.vm.box_check_update = true
         config.vm.box = "centos/7-with-extras"
-        config.vm.box_url = "/Users/raymondcoetzee/git/packer-templates/CentOS-7-x86_64/CentOS-7-x86_64-virtualbox.box"
+        config.vm.box_url = "/Users/raymondcoetzee/git/packer-templates-1/CentOS-7-x86_64/CentOS-7-x86_64-virtualbox.box"
         override.vm.network :private_network, ip: "#{info[:ip]}"
         config.vm.network "forwarded_port", guest: 5601, host: 5601, auto_correct: true
         override.vm.hostname = hostname

@@ -2,12 +2,25 @@
 - hosts: all
   remote_user: vagrant
   become: true
+  serial: 3
   vars:
     oracle_java_version: 8
     oracle_java_version_update: 21
+
+  pre_tasks:
+    - lineinfile:
+        path: /etc/hosts
+        line: '192.168.33.10       server1 server1'
+    - lineinfile:
+        path: /etc/hosts
+        line: '192.168.33.11       server2 server2'
+    - lineinfile:
+        path: /etc/hosts
+        line: '192.168.33.12       server3 server3'
 
   roles:
     - ansible-zookeeper
     - ansible-kafka
     #- collectd
-    - elasticsearch
+    #- elasticsearch
+    #- filebeat

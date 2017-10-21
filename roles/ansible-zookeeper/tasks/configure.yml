@@ -1,4 +1,7 @@
 ---
+- name: Create zookeeper data dir
+  file: path="{{zookeeper_data_dir}}" state=directory owner=zookeeper group=zookeeper recurse=yes
+
 - name: Setup myid
   template: dest="{{zookeeper_data_dir}}/myid" src=myid.j2
   notify:
@@ -32,10 +35,15 @@
   - "{{zookeeper_data_dir}}"
   - "{{zookeeper_log_dir}}"
 
-
 - name: Setup log4j
   template: dest="{{zookeeper_conf_dir}}/log4j.properties" owner=root group=root mode=644 src=log4j.properties.j2
   notify:
     - restart zookeeper
+
+- name: logrotate
+  template: dest="/etc/logrotate.d/kafka" owner=root group=root mode=655 src=logrotate.j2
+
+- name: Remove log
+  shell: "/sbin/logrotate -f /etc/logrotate.d/zookeeper"
 
 - meta: flush_handlers

@@ -38,11 +38,17 @@
   notify:
     - restart kafka
 
+- name: logrotate
+  template: dest="/etc/logrotate.d/kafka" owner=root group=root mode=655 src=logrotate.j2
+
+- name: Remove log
+  shell: "/sbin/logrotate -f /etc/logrotate.d/kafka"
+
 # Setup server.properties
-- name: create server.properties
-  template: dest="{{kafka_conf_dir}}/server.properties" owner={{kafka_user}} group={{kafka_group}} mode=640 src=server.properties.j2
-  notify:
-    - restart kafka
+# - name: create server.properties
+#   template: dest="{{kafka_conf_dir}}/server.properties" owner={{kafka_user}} group={{kafka_group}} mode=640 src=server.properties.j2
+#   notify:
+#     - restart kafka
 
 - name: lookup brokerid
   shell: "cat {{kafka_conf_dir}}/server.properties | grep broker.id | cut -c 11-"

@@ -2,11 +2,12 @@
 apache_mirror: http://apache.mirrors.tds.net
 #kafka_hosts: "{{ansible_fqdn}}:9092"
 kafka_hosts: "{{ groups ['kafka_hosts'] | join(',') }}"
-zookeeper_hosts: 192.168.33.10:2181,192.168.33.11:2181,192.168.33.12:2181/kafka
+zookeeper_hosts: server1:2181,server2:2181,server3:2181/kafka
 kafka_version: 0.10.2.1
 run_mode: Deploy
 skip_install: False
 
+#kafka_listen_address: "{{ansible_hostname}}"
 kafka_num_network_threads: 2
 kafka_num_io_threads: 2
 kafka_num_partitions: 2
