@@ -1,0 +1,9 @@
+/var/log/zookeeper/*.log {
+    create 0644 zookeeper zookeeper
+    daily
+    rotate 10
+    missingok
+    notifempty
+    compress
+    sharedscripts
+}

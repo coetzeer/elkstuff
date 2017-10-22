@@ -1,0 +1,14 @@
+- name: install metricbeat
+  package: name="{{item}}"
+  with_items:
+  - "metricbeat"
+  notify:
+    - restart metricbeat
+
+# - name: create filebeat.yml
+#   template: dest="/etc/filebeat/filebeat.yml" mode=644 src=filebeat.yml.j2
+#   notify:
+#     - restart filebeat
+
+- name: create conf.d directory
+  file: path="/etc/metricbeat/conf.d" state="directory"

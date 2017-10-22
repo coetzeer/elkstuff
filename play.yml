@@ -17,10 +17,12 @@
     - lineinfile:
         path: /etc/hosts
         line: '192.168.33.12       server3 server3'
+    - service: name="ntpd" state="restarted" enabled=yes
 
   roles:
-    - ansible-zookeeper
-    - ansible-kafka
+    #- ansible-zookeeper
+    #- ansible-kafka
     #- collectd
     #- elasticsearch
-    #- filebeat
+    - filebeat
+    - metricbeat

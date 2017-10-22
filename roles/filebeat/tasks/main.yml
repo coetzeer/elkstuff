@@ -1,0 +1,20 @@
+- name: install filebeat
+  package: name="{{item}}"
+  with_items:
+  - "filebeat"
+  notify:
+    - restart filebeat
+
+- name: create filebeat.yml
+  template: dest="/etc/filebeat/filebeat.yml" mode=644 src=filebeat.yml.j2
+  notify:
+    - restart filebeat
+
+- name: create conf.d directory
+  file: path="/etc/filebeat/conf.d" state="directory"
+
+- name: create filebeat.yml conf.d files
+  template: dest="/etc/filebeat/conf.d/filebeat.{{item.key}}.yml" mode=644 src=file-beat-prospector.yml.j2
+  notify:
+    - restart filebeat
+  with_dict: "{{files_to_watch}}"

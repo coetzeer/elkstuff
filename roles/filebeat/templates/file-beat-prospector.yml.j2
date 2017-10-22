@@ -1,0 +1,104 @@
+
+filebeat.modules:
+filebeat.prospectors:
+- input_type: log
+  enabled: true
+  paths:
+    - {{item.value.path}}
+  # Some sample encodings:
+  #   plain, utf-8, utf-16be-bom, utf-16be, utf-16le, big5, gb18030, gbk,
+  #    hz-gb-2312, euc-kr, euc-jp, iso-2022-jp, shift-jis, ...
+  encoding: utf-8
+  #exclude_lines: ["^DBG"]
+  #include_lines: ["^ERR", "^WARN"]
+  exclude_files: [".gz$"]
+  #fields:
+  #  field1_name: "field1_value"
+  #  field2_name: "field2_value"
+  tags: ["{{item.key}}"]
+  #fields_under_root: false
+  #ignore_older: 0
+  #document_type: log
+  scan_frequency: 10s
+  # Defines the buffer size every harvester uses when fetching the file
+  harvester_buffer_size: 16384
+  max_bytes: 10485760
+
+  ### Multiline options
+
+  multiline.pattern: '^[[:space:]]+|^Caused by:'
+  multiline.negate: false
+  multiline.match: after
+  multiline.max_lines: 500
+  multiline.timeout: 5s
+
+  # Setting tail_files to true means filebeat starts reading new files at the end
+  # instead of the beginning. If this is used in combination with log rotation
+  # this can mean that the first entries of a new file are skipped.
+  #tail_files: false
+
+  # The Ingest Node pipeline ID associated with this prospector. If this is set, it
+  # overwrites the pipeline option from the Elasticsearch output.
+  #pipeline:
+
+  # If symlinks is enabled, symlinks are opened and harvested. The harvester is openening the
+  # original for harvesting but will report the symlink name as source.
+  #symlinks: false
+
+  # Backoff values define how aggressively filebeat crawls new files for updates
+  # The default values can be used in most cases. Backoff defines how long it is waited
+  # to check a file again after EOF is reached. Default is 1s which means the file
+  # is checked every second if new lines were added. This leads to a near real time crawling.
+  # Every time a new line appears, backoff is reset to the initial value.
+  #backoff: 1s
+
+  # Max backoff defines what the maximum backoff time is. After having backed off multiple times
+  # from checking the files, the waiting time will never exceed max_backoff independent of the
+  # backoff factor. Having it set to 10s means in the worst case a new line can be added to a log
+  # file after having backed off multiple times, it takes a maximum of 10s to read the new line
+  #max_backoff: 10s
+
+  # The backoff factor defines how fast the algorithm backs off. The bigger the backoff factor,
+  # the faster the max_backoff value is reached. If this value is set to 1, no backoff will happen.
+  # The backoff value will be multiplied each time with the backoff_factor until max_backoff is reached
+  #backoff_factor: 2
+
+  # Max number of harvesters that are started in parallel.
+  # Default is 0 which means unlimited
+  #harvester_limit: 0
+
+  ### Harvester closing options
+
+  # Close inactive closes the file handler after the predefined period.
+  # The period starts when the last line of the file was, not the file ModTime.
+  # Time strings like 2h (2 hours), 5m (5 minutes) can be used.
+  #close_inactive: 5m
+
+  # Close renamed closes a file handler when the file is renamed or rotated.
+  # Note: Potential data loss. Make sure to read and understand the docs for this option.
+  #close_renamed: false
+
+  # When enabling this option, a file handler is closed immediately in case a file can't be found
+  # any more. In case the file shows up again later, harvesting will continue at the last known position
+  # after scan_frequency.
+  #close_removed: true
+
+  # Closes the file handler as soon as the harvesters reaches the end of the file.
+  # By default this option is disabled.
+  # Note: Potential data loss. Make sure to read and understand the docs for this option.
+  #close_eof: false
+
+  ### State options
+
+  # Files for the modification data is older then clean_inactive the state from the registry is removed
+  # By default this is disabled.
+  #clean_inactive: 0
+
+  # Removes the state for file which cannot be found on disk anymore immediately
+  #clean_removed: true
+
+  # Close timeout closes the harvester after the predefined time.
+  # This is independent if the harvester did finish reading the file or not.
+  # By default this option is disabled.
+  # Note: Potential data loss. Make sure to read and understand the docs for this option.
+  #close_timeout: 0

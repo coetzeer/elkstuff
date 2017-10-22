@@ -1,0 +1,10 @@
+debug: false
+files_to_watch:
+  messages:
+    path: "/var/log/messages"
+  kafka_server:
+    path: "/var/log/kafka/server.log"
+  kafka_controller:
+    path: "/var/log/kafka/controller.log"
+  zookeeper:
+    path: "/var/log/zookeeper/zookeeper.log"
