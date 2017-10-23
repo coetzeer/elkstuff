@@ -1,0 +1,48 @@
+- name: install logstash
+  package: name="{{item}}"
+  with_items:
+  - "logstash"
+  - "java-devel"
+  notify:
+    - start logstash
+
+- name: Try and find the rubydebug plugin
+  find:
+    paths: /usr/share/logstash
+    recurse: yes
+    patterns: "rubydebug*"
+  register: rubydebug_plugin_installed
+
+- name: install the ruby debug plugin
+  shell: /usr/share/logstash/bin/logstash-plugin install logstash-codec-rubydebug
+  when: rubydebug_plugin_installed.files | default ([]) | length ==0
+
+- name: Try and find the collectd plugin
+  find:
+    paths: /usr/share/logstash
+    recurse: yes
+    patterns: "collectd*"
+  register: collectd_plugin_installed
+
+- name: install the collectd plugin
+  shell: /usr/share/logstash/bin/logstash-plugin install logstash-codec-collectd
+  when: collectd_plugin_installed.files | default ([]) | length ==0
+
+
+- name: create logstash.yml
+  template: dest="/etc/logstash/logstash.yml" mode=644 src=logstash.yml
+  notify:
+    - start logstash
+
+- name: create conf.d directory
+  file: path="/etc/logstash/conf.d" state="directory"
+
+- name: create logstash filebeat config
+  template: dest="/etc/logstash/conf.d/logstash-filebeats.conf" mode=644 src=logstash-filebeats.conf
+  notify:
+    - start logstash
+
+- name: create logstash metricbeat config
+  template: dest="/etc/logstash/conf.d/logstash-metrics.conf" mode=644 src=logstash-metrics.conf
+  notify:
+    - start logstash

@@ -23,6 +23,7 @@
     #- ansible-zookeeper
     #- ansible-kafka
     #- collectd
-    #- elasticsearch
-    - filebeat
-    - metricbeat
+    - logstash
+    - elasticsearch
+    # - filebeat
+    # - metricbeat

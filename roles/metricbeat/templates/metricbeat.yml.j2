@@ -1,0 +1,93 @@
+metricbeat.config.modules:
+  path: ${path.config}/conf.d/*.yml
+  reload.period: 60s
+  reload.enabled: false
+
+metricbeat.modules:
+- module: system
+  metricsets:
+    - cpu
+    - load
+    - core
+    - diskio
+    - filesystem
+    - fsstat
+    - memory
+    - network
+    - process
+    - socket
+  enabled: true
+  period: 30s
+  processes: ['.*']
+
+- module: jolokia
+  metricsets: ["jmx"]
+  enabled: true
+  period: 30s
+  hosts: ["localhost:7720","localhost:7710"]
+  namespace: "metrics"
+  path: "/jolokia/?ignoreErrors=true&canonicalNaming=false"
+  jmx.mappings:
+    - mbean: 'java.lang:type=Runtime'
+      attributes:
+        - attr: Uptime
+          field: uptime
+  jmx.application:
+  jmx.instance:
+
+#-------------------------------- kafka Module -------------------------------
+- module: kafka
+  metricsets: ["partition"]
+  enabled: true
+  period: 10s
+  hosts: ["server1:9092","server2:9092","server3:9092"]
+
+  client_id: metricbeat
+  retries: 3
+  backoff: 250ms
+
+  # List of Topics to query metadata for. If empty, all topics will be queried.
+  #topics: []
+
+#------------------------------ ZooKeeper Module -----------------------------
+- module: zookeeper
+  metricsets: ["mntr"]
+  enabled: true
+  period: 30s
+  hosts: ["localhost:2181"]
+
+
+
+#================================ General ======================================
+
+#name: {{ansible_hostname}}
+
+tags: ["metricbeat"]
+
+#-------------------------- Elasticsearch output -------------------------------
+output.elasticsearch:
+  enabled: false
+  hosts: ["server1:9200","server2:9200","server3:9200"]
+
+#------------------------------- Kafka output ----------------------------------
+output.kafka:
+  # Boolean flag to enable or disable the output module.
+  enabled: true
+  hosts: ["server1:9092","server2:9092","server3:9092"]
+  topic: metricbeats
+
+logging.level: info
+# Enable debug output for selected components. To enable all selectors use ["*"]
+# Other available selectors are "beat", "publish", "service"
+# Multiple selectors can be chained.
+#logging.selectors: [ ]
+logging.to_syslog: true
+logging.metrics.enabled: true
+logging.metrics.period: 30s
+
+logging.to_files: true
+logging.files:
+  path: /var/log/metricbeat
+  name: metricbeat
+  rotateeverybytes: 100485760
+  keepfiles: 7

@@ -3,12 +3,12 @@
   with_items:
   - "metricbeat"
   notify:
-    - restart metricbeat
+    - start metricbeat
 
-# - name: create filebeat.yml
-#   template: dest="/etc/filebeat/filebeat.yml" mode=644 src=filebeat.yml.j2
-#   notify:
-#     - restart filebeat
+- name: create metricbeat.yml
+  template: dest="/etc/metricbeat/metricbeat.yml" mode=644 src=metricbeat.yml.j2
+  notify:
+    - start metricbeat
 
 - name: create conf.d directory
-  file: path="/etc/metricbeat/conf.d" state="directory"
+  file: path="/etc/filebeat/conf.d" state="directory"
