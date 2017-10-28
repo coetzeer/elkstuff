@@ -1,0 +1,12 @@
+/var/log/logstash/*.log {
+    create 0644 logstash logstash
+    daily
+    rotate 10
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+        systemctl restart logstash
+    endscript
+}

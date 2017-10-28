@@ -1,10 +1,16 @@
 debug: false
 files_to_watch:
   messages:
-    path: "/var/log/messages"
+    path: "/var/log/this_doesnt_exist"
   kafka_server:
     path: "/var/log/kafka/server.log"
   kafka_controller:
     path: "/var/log/kafka/controller.log"
   zookeeper:
     path: "/var/log/zookeeper/zookeeper.log"
+  filebeat:
+    path: "/var/log/filebeat/filebeat"
+  metricbeat:
+    path: "/var/log/metricbeat/metricbeat"
+  elasticsearch:
+    path: "/var/log/elasticsearch/elkstack.log"

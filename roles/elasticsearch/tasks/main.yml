@@ -21,3 +21,10 @@
     line: 'discovery.zen.ping.unicast.hosts: ["192.168.33.10","192.168.33.11","192.168.33.12"]'
   notify:
     - restart elasticsearch
+
+- lineinfile:
+    path: /etc/elasticsearch/elasticsearch.yml
+    regexp: "^network.host:"
+    line: "network.host: {{facter_ipaddress_eth1}}"
+  notify:
+    - restart elasticsearch

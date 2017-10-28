@@ -28,6 +28,17 @@
   shell: /usr/share/logstash/bin/logstash-plugin install logstash-codec-collectd
   when: collectd_plugin_installed.files | default ([]) | length ==0
 
+- name: Try and find the mutate plugin
+  find:
+    paths: /usr/share/logstash
+    recurse: yes
+    patterns: "mutate*"
+  register: mutate_plugin_installed
+
+- name: Install the mutate plugin
+  shell: /usr/share/logstash/bin/logstash-plugin install logstash-filter-mutate
+  when: mutate_plugin_installed.files | default ([]) | length ==0
+
 
 - name: create logstash.yml
   template: dest="/etc/logstash/logstash.yml" mode=644 src=logstash.yml
@@ -46,3 +57,13 @@
   template: dest="/etc/logstash/conf.d/logstash-metrics.conf" mode=644 src=logstash-metrics.conf
   notify:
     - start logstash
+
+- lineinfile:
+    path: /etc/logstash/log4j2.properties
+    regexp: '^appender.rolling.policies.time.interval ='
+    line: 'appender.rolling.policies.time.interval = 10'
+  notify:
+    - start logstash
+
+- name: logrotate
+  template: dest="/etc/logrotate.d/logstash" owner=root group=root mode=644 src=logrotate.j2

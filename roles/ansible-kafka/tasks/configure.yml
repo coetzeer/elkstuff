@@ -39,7 +39,7 @@
     - restart kafka
 
 - name: logrotate
-  template: dest="/etc/logrotate.d/kafka" owner=root group=root mode=655 src=logrotate.j2
+  template: dest="/etc/logrotate.d/kafka" owner=root group=root mode=644 src=logrotate.j2
 
 - name: Remove log
   shell: "/sbin/logrotate -f /etc/logrotate.d/kafka"
